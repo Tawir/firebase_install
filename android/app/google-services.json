@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "707659684985",
+    "project_id": "connect-firebase-3cc0d",
+    "storage_bucket": "connect-firebase-3cc0d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707659684985:android:ed1ae877d98c7a242888a8",
+        "android_client_info": {
+          "package_name": "com.example.chat_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPz2HMeGrmuRKY3MeHpY7ku79XXsXsMyI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707659684985:android:02f62f481013eb0f2888a8",
+        "android_client_info": {
+          "package_name": "com.example.demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPz2HMeGrmuRKY3MeHpY7ku79XXsXsMyI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707659684985:android:28f692bc200324302888a8",
+        "android_client_info": {
+          "package_name": "com.example.flash_chatapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPz2HMeGrmuRKY3MeHpY7ku79XXsXsMyI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
