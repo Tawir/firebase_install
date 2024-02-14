@@ -2,6 +2,7 @@ import 'package:chat_app/compnent/constent.dart';
 import 'package:chat_app/compnent/custom_textform.dart';
 import 'package:chat_app/compnent/customlogo.dart';
 import 'package:chat_app/compnent/cutom_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 
@@ -75,22 +76,22 @@ class _SingUpState extends State<SingUp> {
               kSizedBox,
               CustomButton(
                 title: 'SingUp',
-                 onPressed: ()  {
-                //   try {
-                //     final credential = await FirebaseAuth.instance
-                //         .createUserWithEmailAndPassword(
-                //       email: email.text,
-                //       password: password.text,
-                //     );
-                //   } on FirebaseAuthException catch (e) {
-                //     if (e.code == 'weak-password') {
-                //       print('The password provided is too weak.');
-                //     } else if (e.code == 'email-already-in-use') {
-                //       print('The account already exists for that email.');
-                //     }
-                //   } catch (e) {
-                //     print(e);
-                //   }
+                onPressed: () async {
+                  try {
+                    final credential = await FirebaseAuth.instance
+                        .createUserWithEmailAndPassword(
+                      email: email.text,
+                      password: password.text,
+                    );
+                  } on FirebaseAuthException catch (e) {
+                    if (e.code == 'weak-password') {
+                      print('The password provided is too weak.');
+                    } else if (e.code == 'email-already-in-use') {
+                      print('The account already exists for that email.');
+                    }
+                  } catch (e) {
+                    print(e);
+                  }
                 },
                 color: Colors.orange,
               ),
