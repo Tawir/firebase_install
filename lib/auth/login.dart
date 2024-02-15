@@ -79,20 +79,29 @@ class _LoginState extends State<Login> {
               kSizedBox,
               InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, 'signup');
+                  Navigator.pushReplacementNamed(context, 'signup');
                 },
-                child: Center(
-                  child: RichText(
-                    text: const TextSpan(
-                      text: 'Don\'t Have an acount? ',
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: 'Register',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  child: Center(
+                    child: RichText(
+                      text: const TextSpan(
+                        text: 'Don\'t Have an account? ',
+                        style: TextStyle(
+                          fontSize: 16, // Adjust the font size as needed
+                          color: Colors.black, // Change the color if desired
                         ),
-                      ],
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: 'Register',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange,
+                              fontSize: 16, // Adjust the font size as needed
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

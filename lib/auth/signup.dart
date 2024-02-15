@@ -3,20 +3,27 @@ import 'package:chat_app/compnent/custom_textform.dart';
 import 'package:chat_app/compnent/customlogo.dart';
 import 'package:chat_app/compnent/cutom_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 
-class SingUp extends StatefulWidget {
-  const SingUp({super.key});
+class SignUp extends StatefulWidget {
+  const SignUp({Key? key}) : super(key: key);
 
   @override
-  State<SingUp> createState() => _SingUpState();
+  _SignUpState createState() => _SignUpState();
 }
 
-class _SingUpState extends State<SingUp> {
-  TextEditingController username = TextEditingController();
-  TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
+class _SignUpState extends State<SignUp> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +43,7 @@ class _SingUpState extends State<SingUp> {
                     style:
                         TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
+                  const SizedBox(height: 20.0),
                   const Text(
                     'Login In to Coniune Using The App',
                     style: TextStyle(
@@ -46,21 +51,21 @@ class _SingUpState extends State<SingUp> {
                   ),
                   kSizedBox,
                   const Text(
-                    'Username ',
+                    'Username',
                     style: kTextStyle,
                   ),
                   CustomTextFormField(
                     hinttext: 'Enter your username',
-                    myController: username,
+                    myController: _usernameController,
                   ),
                   kSizedBox,
                   const Text(
-                    'Email ',
+                    'Email',
                     style: kTextStyle,
                   ),
                   CustomTextFormField(
                     hinttext: 'Enter your Email',
-                    myController: email,
+                    myController: _emailController,
                   ),
                   kSizedBox,
                   const Text(
@@ -69,28 +74,41 @@ class _SingUpState extends State<SingUp> {
                   ),
                   CustomTextFormField(
                     hinttext: 'Enter your Password',
-                    myController: password,
+                    myController: _passwordController,
                   ),
                 ],
               ),
               kSizedBox,
               CustomButton(
-                title: 'SingUp',
+                title: 'SignUp',
                 onPressed: () async {
                   try {
                     final credential = await FirebaseAuth.instance
                         .createUserWithEmailAndPassword(
-                      email: email.text,
-                      password: password.text,
+                      email: _emailController.text,
+                      password: _passwordController.text,
                     );
+                    Navigator.pushReplacementNamed(context, 'homepage');
                   } on FirebaseAuthException catch (e) {
+                    String errorMessage = 'An error occurred';
                     if (e.code == 'weak-password') {
-                      print('The password provided is too weak.');
+                      errorMessage = 'The password provided is too weak.';
                     } else if (e.code == 'email-already-in-use') {
-                      print('The account already exists for that email.');
+                      errorMessage =
+                          'The account already exists for that email.';
                     }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(errorMessage),
+                      ),
+                    );
                   } catch (e) {
                     print(e);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('An unexpected error occurred'),
+                      ),
+                    );
                   }
                 },
                 color: Colors.orange,
@@ -98,19 +116,29 @@ class _SingUpState extends State<SingUp> {
               kSizedBox,
               InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, 'login');
+                  Navigator.pushReplacementNamed(context, 'login');
                 },
-                child: Center(
-                  child: RichText(
-                    text: const TextSpan(
-                      text: 'Have an acount? ',
-                      children: <TextSpan>[
-                        TextSpan(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  child: Center(
+                    child: RichText(
+                      text: const TextSpan(
+                        text: 'Have an account? ',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                        children: <TextSpan>[
+                          TextSpan(
                             text: 'LogIn',
                             style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.orange)),
-                      ],
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

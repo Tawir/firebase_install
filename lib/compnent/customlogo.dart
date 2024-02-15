@@ -6,17 +6,26 @@ class CustomLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(70.0),
-        child: Container(
-          width: 100.0,
-          height: 100.0,
-          color: Colors.grey[200],
-          child: Image.asset(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Add animation here, e.g., using AnimatedContainer or AnimatedOpacity
+          Image.asset(
             'assets/accessories-notes-icon.png',
+            width: 100.0,
+            height: 100.0,
             fit: BoxFit.cover,
           ),
-        ),
+          const SizedBox(height: 8), // Add some spacing
+          const Text(
+            'Your App Name', // Replace with your app's name
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
     );
   }

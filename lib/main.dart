@@ -1,6 +1,7 @@
 import 'package:chat_app/auth/login.dart';
 import 'package:chat_app/auth/signup.dart';
 import 'package:chat_app/firebase_options.dart';
+import 'package:chat_app/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -38,10 +39,12 @@ class _myAppState extends State<myApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const SingUp(),
+      home: FirebaseAuth.instance.currentUser == null ? const Login() : const HomePage(),
       routes: {
         'login': (context) => const Login(),
-        'signup': (context) => const SingUp(),
+        'signup': (context) => const SignUp(),
+
+        'homepage' : (context) => const HomePage(),
       },
     );
   }
