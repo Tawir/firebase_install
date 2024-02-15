@@ -1,3 +1,5 @@
+
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:chat_app/compnent/constent.dart';
 import 'package:chat_app/compnent/custom_textform.dart';
 import 'package:chat_app/compnent/customlogo.dart';
@@ -16,6 +18,7 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -28,26 +31,25 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: ListView(
-            children: [
-              Column(
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: ListView(
+          children: [
+            Form(
+              key: _formKey,
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const CustomLogo(),
                   kSizedBox,
                   const Text(
                     'SignUp',
-                    style:
-                        TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20.0),
                   const Text(
-                    'Login In to Coniune Using The App',
-                    style: TextStyle(
-                        color: Colors.grey, fontWeight: FontWeight.bold),
+                    'Login In to Continue Using The App',
+                    style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
                   ),
                   kSizedBox,
                   const Text(
@@ -57,6 +59,12 @@ class _SignUpState extends State<SignUp> {
                   CustomTextFormField(
                     hinttext: 'Enter your username',
                     myController: _usernameController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your username';
+                      }
+                      return null;
+                    }, 
                   ),
                   kSizedBox,
                   const Text(
@@ -66,6 +74,12 @@ class _SignUpState extends State<SignUp> {
                   CustomTextFormField(
                     hinttext: 'Enter your Email',
                     myController: _emailController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      return null;
+                    },
                   ),
                   kSizedBox,
                   const Text(
@@ -75,16 +89,23 @@ class _SignUpState extends State<SignUp> {
                   CustomTextFormField(
                     hinttext: 'Enter your Password',
                     myController: _passwordController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password';
+                      }
+                      return null;
+                    },
                   ),
                 ],
               ),
-              kSizedBox,
-              CustomButton(
-                title: 'SignUp',
-                onPressed: () async {
+            ),
+            kSizedBox,
+            CustomButton(
+              title: 'SignUp',
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
                   try {
-                    final credential = await FirebaseAuth.instance
-                        .createUserWithEmailAndPassword(
+                    final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
                       email: _emailController.text,
                       password: _passwordController.text,
                     );
@@ -94,14 +115,19 @@ class _SignUpState extends State<SignUp> {
                     if (e.code == 'weak-password') {
                       errorMessage = 'The password provided is too weak.';
                     } else if (e.code == 'email-already-in-use') {
-                      errorMessage =
-                          'The account already exists for that email.';
+                      errorMessage = 'The account already exists for that email.';
                     }
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(errorMessage),
-                      ),
-                    );
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.error,
+                      animType: AnimType.rightSlide,
+                      headerAnimationLoop: false,
+                      title: 'Error',
+                      desc: errorMessage,
+                      btnOkOnPress: () {},
+                      btnOkIcon: Icons.cancel,
+                      btnOkColor: Colors.red,
+                    ).show();
                   } catch (e) {
                     print(e);
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -110,43 +136,39 @@ class _SignUpState extends State<SignUp> {
                       ),
                     );
                   }
-                },
-                color: Colors.orange,
-              ),
-              kSizedBox,
-              InkWell(
-                onTap: () {
-                  Navigator.pushReplacementNamed(context, 'login');
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0),
-                  child: Center(
-                    child: RichText(
-                      text: const TextSpan(
-                        text: 'Have an account? ',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: 'LogIn',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange,
-                              fontSize: 16,
-                            ),
+                }
+              },
+              color: Colors.orange,
+            ),
+            kSizedBox,
+            InkWell(
+              onTap: () {
+                Navigator.pushReplacementNamed(context, 'login');
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: Center(
+                  child: RichText(
+                    text: const TextSpan(
+                      text: 'Have an account? ',
+                      style: TextStyle(fontSize: 16, color: Colors.black),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: 'LogIn',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.orange,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
-  }
-}
+      );
+   }
+   }

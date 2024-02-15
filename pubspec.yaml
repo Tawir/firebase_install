@@ -39,6 +39,7 @@ dependencies:
   firebase_remote_config_web: ^1.4.21
   cloud_firestore_web: ^3.10.4
   cloud_functions_web: ^4.6.16
+  awesome_dialog: ^3.2.0
   
 
 dev_dependencies:
