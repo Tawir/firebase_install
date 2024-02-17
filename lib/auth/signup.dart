@@ -105,11 +105,13 @@ class _SignUpState extends State<SignUp> {
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   try {
+                    // ignore: unused_local_variable
                     final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
                       email: _emailController.text,
                       password: _passwordController.text,
                     );
-                    Navigator.pushReplacementNamed(context, 'homepage');
+                    FirebaseAuth.instance.currentUser!.sendEmailVerification();
+                    Navigator.pushReplacementNamed(context, 'login');
                   } on FirebaseAuthException catch (e) {
                     String errorMessage = 'An error occurred';
                     if (e.code == 'weak-password') {

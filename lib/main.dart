@@ -1,5 +1,6 @@
 import 'package:chat_app/auth/login.dart';
 import 'package:chat_app/auth/signup.dart';
+import 'package:chat_app/categories/add_category.dart';
 import 'package:chat_app/firebase_options.dart';
 import 'package:chat_app/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -38,13 +39,29 @@ class _myAppState extends State<myApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        appBarTheme:AppBarTheme(
+          backgroundColor: Colors.grey[50],
+          titleTextStyle: TextStyle(
+            color: Colors.orange,
+            fontSize: 17.0,
+            fontWeight: FontWeight.bold
+          ),
+          iconTheme: IconThemeData(
+            color: Colors.orange
+          )
+        )
+      ),
       debugShowCheckedModeBanner: false,
-      home: FirebaseAuth.instance.currentUser == null ? const Login() : const HomePage(),
+      home: const HomePage(),
+      // (FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.emailVerified)
+      // ? const HomePage() : const Login(),
       routes: {
         'login': (context) => const Login(),
         'signup': (context) => const SignUp(),
-
         'homepage' : (context) => const HomePage(),
+        'categories' : (context) => const AddCategories(),
+
       },
     );
   }

@@ -4,6 +4,7 @@ import 'package:chat_app/compnent/customlogo.dart';
 import 'package:chat_app/compnent/cutom_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -16,6 +17,32 @@ class _LoginState extends State<Login> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   GlobalKey<FormState> formstate = GlobalKey<FormState>();
+
+  Future<void> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        return;
+      }
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      Navigator.pushReplacementNamed(context, 'homepage');
+    } catch (e) {
+      print("Google Sign-In Error: $e");
+      // Handle Google sign-in errors
+      // For example, show an error dialog or toast
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Google sign-in failed. Please try again.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +60,14 @@ class _LoginState extends State<Login> {
                   const SizedBox(height: 20),
                   Text(
                     'Login',
-                    style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20),
                   Text(
                     'Login In to Continue Using The App',
-                    style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Colors.grey, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20),
                   Text('Email', style: TextStyle(fontSize: 16)),
@@ -47,7 +76,6 @@ class _LoginState extends State<Login> {
                     myController: emailController,
                     validator: (val) {
                       if (val == "") return 'Please enter your email';
-                      // Add additional validation if needed
                       return null;
                     },
                   ),
@@ -58,19 +86,56 @@ class _LoginState extends State<Login> {
                     myController: passwordController,
                     validator: (val) {
                       if (val == "") return 'Please enter your password';
-                      // Add additional validation if needed
                       return null;
                     },
                   ),
                   InkWell(
-                    onTap: () {
+                    onTap: () async {
+                      if (emailController.text == "") {
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.error,
+                          animType: AnimType.rightSlide,
+                          title: 'Error',
+                          desc: 'Please Enter Valid Email address',
+                          btnOkOnPress: () {},
+                          btnOkIcon: Icons.cancel,
+                          btnOkColor: Colors.red,
+                        ).show();
+                        return;
+                      }
+                      try {
+                        await FirebaseAuth.instance.sendPasswordResetEmail(
+                            email: emailController.text);
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.success,
+                          animType: AnimType.rightSlide,
+                          title: 'Success',
+                          desc: 'Email Reset Link was sent to your Email',
+                          btnOkOnPress: () {},
+                          btnOkIcon: Icons.check,
+                          btnOkColor: Colors.green,
+                        ).show();
+                      } catch (e) {
+                                                 AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.error,
+                        animType: AnimType.rightSlide,
+                        title: 'Error',
+                        desc: 'Please enter valid Email',
+                        btnOkOnPress: () {},
+                        btnOkIcon: Icons.check,
+                        btnOkColor: Colors.red,
+                      ).show();
+                        print(e);
+                      }
                       // Navigate to password reset screen
                     },
                     child: const Padding(
                       padding: EdgeInsets.only(top: 10, bottom: 20),
                       child: Text(
                         'Forgot password?',
-                        textAlign: TextAlign.right,
                         style: TextStyle(fontSize: 14, color: Colors.blue),
                       ),
                     ),
@@ -83,31 +148,34 @@ class _LoginState extends State<Login> {
               onPressed: () async {
                 if (formstate.currentState!.validate()) {
                   try {
-                    final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    final credential =
+                        await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: emailController.text,
                       password: passwordController.text,
                     );
-                    // Navigate to home screen or show success message
-                  } on FirebaseAuthException catch (e) {
-                    String errorMessage = 'An error occurred';
-                    if (e.code == 'user-not-found') {
-                      errorMessage = 'No user found for that email.';
-                    } else if (e.code == 'wrong-password') {
-                      errorMessage = 'Wrong password provided for that user.';
+                    if (credential.user != null) {
+                      if (credential.user!.emailVerified) {
+                        Navigator.pushReplacementNamed(context, 'homepage');
+                      } else {
+                        print('Please verify your email.');
+                      }
                     }
-                    AwesomeDialog(
-                      context: context,
-                      dialogType: DialogType.error,
-                      animType: AnimType.rightSlide,
-                      headerAnimationLoop: false,
-                      title: 'Error',
-                      desc: errorMessage,
-                      btnOkOnPress: () {},
-                      btnOkIcon: Icons.cancel,
-                      btnOkColor: Colors.red,
-                    ).show();
+                  } on FirebaseAuthException catch (e) {
+                    if (e.code == 'user-not-found' ||
+                        e.code == 'wrong-password') {
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.error,
+                        animType: AnimType.rightSlide,
+                        title: 'Error',
+                        desc: e.message ?? 'Authentication failed',
+                        btnOkOnPress: () {},
+                        btnOkIcon: Icons.cancel,
+                        btnOkColor: Colors.red,
+                      ).show();
+                    }
                   } catch (e) {
-                    print(e);
+                    print("Login Error: $e");
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('An unexpected error occurred'),
@@ -121,9 +189,7 @@ class _LoginState extends State<Login> {
             const SizedBox(height: 20),
             CustomButton(
               title: 'Login With Google',
-              onPressed: () {
-                // Implement Google sign-in functionality
-              },
+              onPressed: signInWithGoogle,
               color: Colors.red,
             ),
             const SizedBox(height: 20),
